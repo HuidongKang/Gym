@@ -1,0 +1,4 @@
+INSERT INTO `gym`.`membership` (`id`, `createDate`, `membershipName`, `month`, `price`) VALUES (1, '2023-04-27 22:32:34.000000', '1개월', 1, '100000');
+INSERT INTO `gym`.`membership` (`id`, `createDate`, `membershipName`, `month`, `price`) VALUES (2, '2023-04-27 22:33:19.000000', '3개월', 3, '220000');
+INSERT INTO `gym`.`membership` (`id`, `createDate`, `membershipName`, `month`, `price`) VALUES (3, '2023-04-27 22:33:40.000000', '6개월', 6, '400000');
+INSERT INTO `gym`.`membership` (`id`, `createDate`, `membershipName`, `month`, `price`) VALUES (4, '2023-04-27 22:34:17.000000', '1년', 12, '700000');
