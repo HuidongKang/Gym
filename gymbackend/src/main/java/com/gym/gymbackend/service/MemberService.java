@@ -1,5 +1,6 @@
 package com.gym.gymbackend.service;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -26,6 +27,31 @@ public class MemberService {
     private MembershipRepository membershipRepository;
     @Autowired
     private EntryRepository entryRepository;
+
+    @Transactional
+    public String 회원권연장(HashMap<String, Object> req){
+        int memberId = Integer.parseInt(req.get("id").toString());
+        String membershipName = req.get("membership").toString();
+        
+        // 날짜 추출
+        String startYear = req.get("startYear").toString();
+        String startMonth = req.get("startMonth").toString();
+        String startDay = req.get("startDay").toString();
+        LocalDateTime startDate = LocalDateTime.of(Integer.parseInt(startYear), Integer.parseInt(startMonth), Integer.parseInt(startDay), 0, 0);
+
+        Member member = memberRepository.findById(memberId).get();
+
+        Membership membership = membershipRepository.findByMembershipName(membershipName);
+        
+        
+        // 더티체킹 => DB 반영
+        member.setCreateDate(startDate);
+        LocalDateTime expDate = startDate.plusMonths(membership.getMonth());
+        member.setExpirationDate(expDate);
+        member.setMembership(membership);
+        
+        return "성공";
+    }
 
     @Transactional(readOnly = true)
     public boolean 로그인중복체크(String password){

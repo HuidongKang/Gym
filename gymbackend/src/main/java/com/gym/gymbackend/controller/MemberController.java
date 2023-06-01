@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,22 +23,29 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
-    @GetMapping("/api/checkin/{password}")
+    @PutMapping("/api/extension/")
+    public ResponseEntity<?> extension(@RequestBody HashMap<String, Object> req) {
+        String message = memberService.회원권연장(req);
+        if (message.equals("성공")) {
+            return new ResponseEntity<>("회원권 연장 성공", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("회원권 연장 실패", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/api/login/{password}")
     public ResponseEntity<?> checkin(@PathVariable String password) {
 
         List<Member> members = memberService.로그인(password);
 
-        if (members.size() == 1) {
-            return new ResponseEntity<>(members.get(0), HttpStatus.OK);
-        } else if(members.size() == 0) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        } else{
+        if (members.size() >= 1) {
             return new ResponseEntity<>(members, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("등록된 회원이 아닙니다.", HttpStatus.BAD_REQUEST);
         }
-
     }
 
-    @GetMapping("/api/checkin/{password}/{id}")
+    @GetMapping("/api/login/{password}/{id}")
     public ResponseEntity<?> dupCheckin(@PathVariable Map<String, String> body) {
         String password = body.get("password");
         Long id = Long.parseLong(body.get("id"));
@@ -50,10 +58,10 @@ public class MemberController {
     public ResponseEntity<?> signup(@RequestBody HashMap<String, Object> req) {
 
         String message = memberService.회원가입(req);
-        if(message.equals("성공")){
+        if (message.equals("성공")) {
             return new ResponseEntity<>(message, HttpStatus.CREATED);
-        } else{
-            return new ResponseEntity<>(message, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
         }
     }
 }

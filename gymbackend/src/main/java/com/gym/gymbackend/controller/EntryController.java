@@ -32,7 +32,7 @@ public class EntryController {
         if(message.equals("성공")){
             return new ResponseEntity<>(message, HttpStatus.CREATED);
         } else{
-            return new ResponseEntity<>(message, HttpStatus.OK);
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
         }
     }
     
