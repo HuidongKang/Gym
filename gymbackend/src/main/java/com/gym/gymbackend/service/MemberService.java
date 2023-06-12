@@ -1,6 +1,5 @@
 package com.gym.gymbackend.service;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -28,6 +27,59 @@ public class MemberService {
     @Autowired
     private EntryRepository entryRepository;
 
+    
+    @Transactional
+    public void 만료회원삭제(){
+        // 1. 만료 회원 검색
+        List<Integer> expMembers = memberRepository.mSelectExpMember();
+        
+        // 2. Entry 테이블에서 만료 회원의 entry 삭제
+        for(int id : expMembers){
+            entryRepository.deleteById(id);
+        }
+
+        // 3. Member 테이블에서 만료 회원 삭제
+        for(int id : expMembers){
+            memberRepository.deleteById(id);
+        }
+    }
+
+    @Transactional
+    public void 회원삭제(int id){
+        memberRepository.deleteById(id);
+    }
+
+    @Transactional
+    public String 회원정보수정(HashMap<String, Object> req){
+        if(req.get("memberName").equals("")){
+            return "이름을 입력해주세요";
+        }
+        if(req.get("phone").equals("")){
+            return "휴대폰 번호를 입력해주세요";
+        }
+        if(req.get("age").equals("")){
+            return "나이를 입력해주세요";
+        }
+
+        // 더티 체킹
+        Member member = memberRepository.findById(Integer.parseInt(req.get("id").toString())).get();
+        
+        member.setMemberName(req.get("memberName").toString());
+        member.setGender(req.get("gender").toString());
+        member.setAge(Integer.parseInt(req.get("age").toString()));
+        member.setPhone(req.get("phone").toString());
+        member.setJob(req.get("job").toString());
+        member.setAddress(req.get("address").toString());
+        String password = req.get("phone").toString().substring(req.get("phone").toString().length() - 4);
+        member.setPassword(password);
+        return "성공";
+    }
+
+    @Transactional(readOnly = true)
+    public List<Member> 회원정보로드(){
+        return memberRepository.findAll();
+    }
+
     @Transactional
     public String 회원권연장(HashMap<String, Object> req){
         int memberId = Integer.parseInt(req.get("id").toString());
@@ -39,12 +91,12 @@ public class MemberService {
         String startDay = req.get("startDay").toString();
         LocalDateTime startDate = LocalDateTime.of(Integer.parseInt(startYear), Integer.parseInt(startMonth), Integer.parseInt(startDay), 0, 0);
 
-        Member member = memberRepository.findById(memberId).get();
-
+        // 회원권 추출
         Membership membership = membershipRepository.findByMembershipName(membershipName);
         
-        
         // 더티체킹 => DB 반영
+        Member member = memberRepository.findById(memberId).get();
+
         member.setCreateDate(startDate);
         LocalDateTime expDate = startDate.plusMonths(membership.getMonth());
         member.setExpirationDate(expDate);

@@ -2,3 +2,7 @@ INSERT INTO `gym`.`membership` (`id`, `createDate`, `membershipName`, `month`, `
 INSERT INTO `gym`.`membership` (`id`, `createDate`, `membershipName`, `month`, `price`) VALUES (2, '2023-04-27 22:33:19.000000', '3개월', 3, '220000');
 INSERT INTO `gym`.`membership` (`id`, `createDate`, `membershipName`, `month`, `price`) VALUES (3, '2023-04-27 22:33:40.000000', '6개월', 6, '400000');
 INSERT INTO `gym`.`membership` (`id`, `createDate`, `membershipName`, `month`, `price`) VALUES (4, '2023-04-27 22:34:17.000000', '1년', 12, '700000');
+
+
+
+SELECT DATE_FORMAT(createDate, '%Y년 %m월 %d일 %H시 %i분 %s초'), (SELECT memberName FROM member WHERE member.id = entry.memberId), (SELECT phone FROM member WHERE member.id = entry.memberId)FROM entry ORDER BY createDate DESC;

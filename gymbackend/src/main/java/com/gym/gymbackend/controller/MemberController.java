@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,13 +24,41 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
+    @DeleteMapping("/api/checkExp/")
+    public ResponseEntity<?> checkExp(){
+        memberService.만료회원삭제();
+        return new ResponseEntity<>(null, HttpStatus.OK);
+        
+    }
+
+    @DeleteMapping("/api/removeMember/{id}")
+    public ResponseEntity<?> removeMember(@PathVariable int id){
+        memberService.회원삭제(id);
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    @PutMapping("/api/modifyMember/")
+    public ResponseEntity<?> modifyMember(@RequestBody HashMap<String, Object> req){
+        String message = memberService.회원정보수정(req);
+        if (message.equals("성공")) {
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/api/manageMember/load")
+    public ResponseEntity<?> loadMember(){
+        return new ResponseEntity<>(memberService.회원정보로드(), HttpStatus.OK);
+    }
+
     @PutMapping("/api/extension/")
     public ResponseEntity<?> extension(@RequestBody HashMap<String, Object> req) {
         String message = memberService.회원권연장(req);
         if (message.equals("성공")) {
-            return new ResponseEntity<>("회원권 연장 성공", HttpStatus.OK);
+            return new ResponseEntity<>(message, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("회원권 연장 실패", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
         }
     }
 

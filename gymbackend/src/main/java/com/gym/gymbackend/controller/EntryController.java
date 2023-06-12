@@ -25,9 +25,13 @@ public class EntryController {
     @Autowired
     private EntryService entryService;
 
+    @GetMapping("/api/entryInquiry")
+    public ResponseEntity<?> inquiry(){
+        return new ResponseEntity<>(entryService.출입조회(), HttpStatus.OK);
+    }
+
     @PostMapping("/api/checkin/check")
     public ResponseEntity<?> check(@RequestBody HashMap<String, Object> req){
-
         String message = entryService.출입체크(req);
         if(message.equals("성공")){
             return new ResponseEntity<>(message, HttpStatus.CREATED);
